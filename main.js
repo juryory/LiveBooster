@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 
 function createWindow() {
@@ -45,6 +45,73 @@ function createWindow() {
   win.webContents.on('preload-error', (event, preloadPath, error) => {
     console.error('Preload script error:', error);
   });
+
+  // 创建中文菜单
+  const template = [
+    {
+      label: '文件',
+      submenu: [
+        {
+          label: '退出',
+          accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
+          click: () => app.quit()
+        }
+      ]
+    },
+    {
+      label: '编辑',
+      submenu: [
+        { label: '撤销', role: 'undo' },
+        { label: '重做', role: 'redo' },
+        { type: 'separator' },
+        { label: '剪切', role: 'cut' },
+        { label: '复制', role: 'copy' },
+        { label: '粘贴', role: 'paste' },
+        { label: '删除', role: 'delete' },
+        { type: 'separator' },
+        { label: '全选', role: 'selectAll' }
+      ]
+    },
+    {
+      label: '视图',
+      submenu: [
+        { label: '重新加载', role: 'reload' },
+        { label: '强制重新加载', role: 'forceReload' },
+        { type: 'separator' },
+        { label: '实际大小', role: 'resetZoom' },
+        { label: '放大', role: 'zoomIn' },
+        { label: '缩小', role: 'zoomOut' },
+        { type: 'separator' },
+        { label: '全屏', role: 'togglefullscreen' }
+      ]
+    },
+    {
+      label: '帮助',
+      submenu: [
+        {
+          label: '关于 LiveBooster',
+          click: async () => {
+            const { dialog } = require('electron');
+            dialog.showMessageBox(win, {
+              title: '关于 LiveBooster',
+              message: 'LiveBooster v1.0.0\n一个直播数据助推工具\n\n© 2025 LiveBooster',
+              buttons: ['确定']
+            });
+          }
+        },
+        {
+          label: '访问 GitHub',
+          click: async () => {
+            const { shell } = require('electron');
+            await shell.openExternal('https://github.com/juryory/LiveBooster');
+          }
+        }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 }
 
 // 确保应用程序完全准备好后再创建窗口

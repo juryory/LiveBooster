@@ -1,11 +1,60 @@
 const { contextBridge } = require('electron');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const path = require('path');
+const fs = require('fs');
 
 // 添加调试信息
 console.log('Preload script is running');
 
 let browser = null;
+
+async function launchBrowser() {
+    try {
+        let chromePath;
+        
+        if (process.platform === 'darwin') {
+            // macOS 上使用系统 Chrome
+            const possiblePaths = [
+                '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+                '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+                '/Applications/Chromium.app/Contents/MacOS/Chromium'
+            ];
+            
+            for (const path of possiblePaths) {
+                if (fs.existsSync(path)) {
+                    chromePath = path;
+                    break;
+                }
+            }
+            
+            if (!chromePath) {
+                throw new Error('请先安装 Google Chrome、Chrome Canary 或 Chromium');
+            }
+        } else {
+            // Windows 上使用打包的 Chrome
+            const appPath = process.env.PORTABLE_EXECUTABLE_DIR || 
+                          path.dirname(process.execPath);
+            chromePath = path.join(appPath, 'resources', 'chrome-win', 'chrome.exe');
+        }
+        
+        console.log('Chrome 路径:', chromePath);
+        
+        const browser = await puppeteer.launch({
+            headless: 'new',
+            executablePath: chromePath,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu'
+            ]
+        });
+        return browser;
+    } catch (error) {
+        console.error('启动浏览器失败:', error);
+        throw error;
+    }
+}
 
 // 定义 API 对象
 const api = {
@@ -13,10 +62,7 @@ const api = {
     console.log('fetchData called with url:', url);
     try {
       if (!browser) {
-        browser = await puppeteer.launch({
-          headless: 'new',
-          args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
+        browser = await launchBrowser();
       }
 
       const page = await browser.newPage();
