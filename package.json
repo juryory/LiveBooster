@@ -1,5 +1,5 @@
 {
-    "name": "LiveBooster",
+    "name": "livebooster",
     "version": "1.0.0",
     "description": "A tool to boost live streaming metrics",
     "main": "main.js",
@@ -13,5 +13,12 @@
         "puppeteer": "^22.0.0"
     },
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "build": {
+    "appId": "com.example.livemonitor",
+    "productName": "LiveMonitor",
+    "mac": { "target": "dmg" },
+    "win": { "target": "nsis" },
+    "linux": { "target": "AppImage" }
+    }
 }
