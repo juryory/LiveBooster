@@ -1,5 +1,5 @@
 {
-    "name": "live-booster",
+    "name": "LiveBooster",
     "version": "1.0.0",
     "description": "A tool to boost live streaming metrics",
     "main": "main.js",
@@ -12,6 +12,6 @@
         "electron": "^30.0.0",
         "puppeteer": "^22.0.0"
     },
-    "author": "juryory",
+    "author": "",
     "license": "MIT"
 }
