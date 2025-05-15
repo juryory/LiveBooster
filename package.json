@@ -1,0 +1,17 @@
+{
+    "name": "live-booster",
+    "version": "1.0.0",
+    "description": "A tool to boost live streaming metrics",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "dependencies": {
+        "axios": "^1.6.7",
+        "cheerio": "^1.0.0-rc.12",
+        "electron": "^30.0.0",
+        "puppeteer": "^22.0.0"
+    },
+    "author": "juryory",
+    "license": "MIT"
+}

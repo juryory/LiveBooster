@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>LiveBooster</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>LiveBooster</h1>
+  <div class="control-panel">
+    <div class="input-group">
+      <label for="url">直播网址：</label>
+      <input type="text" id="url" placeholder="请输入直播网址" />
+    </div>
+    <div class="input-group">
+      <label for="refresh-interval">刷新间隔：</label>
+      <div class="refresh-input-container">
+        <input type="number" id="refresh-interval" min="5" value="10" />
+        <span class="input-suffix">秒</span>
+      </div>
+    </div>
+    <div class="buttons">
+      <button id="start">开始助推</button>
+      <button id="stop" disabled>停止助推</button>
+    </div>
+  </div>
+  <div id="output">
+    <div class="stats">
+      <p><strong>运行时长:</strong> <span id="duration">0分钟0秒</span></p>
+      <p><strong>刷新次数:</strong> <span id="refresh-count">0</span></p>
+      <p><strong>下次刷新:</strong> <span id="next-refresh">-</span></p>
+    </div>
+    <div class="live-info">
+      <p><strong>标题:</strong> <span id="title">-</span></p>
+      <p><strong>场观:</strong> <span id="views">-</span></p>
+    </div>
+    <div class="log-section">
+      <h2>运行日志</h2>
+      <div id="log-container"></div>
+    </div>
+  </div>
+  <footer class="footer">
+    <p>© 2025 LiveBooster. MIT License. <a href="https://github.com/juryory/LiveBooster" target="_blank">GitHub</a></p>
+  </footer>
+  <script src="renderer.js"></script>
+</body>
+</html>
