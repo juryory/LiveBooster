@@ -67,8 +67,16 @@ const api = {
 
       const page = await browser.newPage();
       
-      // 设置视口大小
-      await page.setViewport({ width: 1280, height: 800 });
+      // 设置手机端 User-Agent
+      await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1');
+      
+      // 设置视口大小为手机尺寸
+      await page.setViewport({ 
+        width: 375,
+        height: 812,
+        isMobile: true,
+        hasTouch: true
+      });
       
       // 启用请求拦截
       await page.setRequestInterception(true);
@@ -99,74 +107,16 @@ const api = {
       
       // 获取页面内容
       const pageData = await page.evaluate(() => {
-        // 在页面上下文中执行的函数
-        const findViewerCount = () => {
-          // 尝试各种可能的选择器
-          const selectors = [
-            '#j-watches-num',
-            '.watch-num',
-            '.viewer-count',
-            '[data-watch-num]',
-            '[data-viewers]',
-            '.live-player-viewer-count',
-            // 添加更多可能的选择器
-            '.watch_count',
-            '.viewer_count',
-            '.live-viewer-count',
-            '.audience-count',
-            '#watch-counter'
-          ];
-          
-          // 记录所有找到的元素
-          const foundElements = [];
-          
-          // 检查所有选择器
-          for (const selector of selectors) {
-            const elements = document.querySelectorAll(selector);
-            elements.forEach(element => {
-              foundElements.push({
-                selector: selector,
-                text: element.textContent.trim(),
-                isVisible: element.offsetParent !== null
-              });
-            });
-          }
-          
-          // 如果找到了元素，返回第一个可见元素的文本
-          const visibleElement = foundElements.find(e => e.isVisible);
-          if (visibleElement) {
-            return visibleElement.text;
-          }
-          
-          // 如果没有找到，尝试查找包含特定关键词的元素
-          const keywords = ['观看', '人气', '观众', '在线', 'watching', 'viewers', '人数', '热度'];
-          const elements = document.getElementsByTagName('*');
-          const keywordElements = [];
-          
-          for (const element of elements) {
-            const text = element.textContent.trim();
-            if (keywords.some(keyword => text.includes(keyword))) {
-              keywordElements.push({
-                text: text,
-                id: element.id,
-                className: element.className,
-                isVisible: element.offsetParent !== null
-              });
-            }
-          }
-          
-          console.log('找到的关键词元素:', keywordElements);
-          
-          // 返回第一个可见的包含关键词的元素
-          const visibleKeywordElement = keywordElements.find(e => e.isVisible);
-          return visibleKeywordElement ? visibleKeywordElement.text : null;
-        };
+        // 获取场观数据
+        const viewerElement = document.querySelector('.live-watch.font6.color-9');
+        const viewerCount = viewerElement ? viewerElement.textContent.trim() : null;
         
-        const viewerCount = findViewerCount();
-        console.log('找到的观看人数:', viewerCount);
+        // 获取标题
+        const titleElement = document.querySelector('.article-title.font1_c.color-2');
+        const title = titleElement ? titleElement.textContent.trim() : document.title;
         
         return {
-          title: document.title,
+          title: title,
           views: viewerCount,
           url: window.location.href,
           html: document.documentElement.outerHTML

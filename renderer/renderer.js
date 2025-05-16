@@ -27,9 +27,9 @@ function validateInputs() {
     return false;
   }
   
-  if (isNaN(interval) || interval < 5) {
-    alert('请输入有效的刷新间隔，最小为5秒');
-    refreshIntervalInput.value = '5';
+  if (isNaN(interval) || interval < 1) {
+    alert('请输入有效的刷新间隔，最小为1秒');
+    refreshIntervalInput.value = '1';
     return false;
   }
   
@@ -95,6 +95,9 @@ function resetMonitoring() {
   durationElement.innerText = '0分钟0秒';
   refreshCountElement.innerText = '0';
   nextRefreshElement.innerText = '-';
+  
+  // 清空日志内容
+  logContainer.innerHTML = '';
 }
 
 // 开始监控
@@ -144,8 +147,8 @@ stopButton.addEventListener('click', () => {
 // 限制刷新间隔的输入范围
 refreshIntervalInput.addEventListener('change', () => {
   const value = parseInt(refreshIntervalInput.value);
-  if (isNaN(value) || value < 5) {
-    refreshIntervalInput.value = '5';
+  if (isNaN(value) || value < 1) {
+    refreshIntervalInput.value = '1';
   }
 });
 

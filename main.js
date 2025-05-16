@@ -32,8 +32,6 @@ function createWindow() {
   // 加载前先等待一下确保 preload 脚本加载完成
   setTimeout(() => {
     win.loadFile('renderer/index.html');
-    // 打开开发者工具
-    win.webContents.openDevTools();
   }, 100);
 
   // 监听页面加载完成事件
@@ -46,11 +44,21 @@ function createWindow() {
     console.error('Preload script error:', error);
   });
 
-  // 创建中文菜单
-  const template = [
+  return win;
+}
+
+// 创建菜单模板
+function createMenuTemplate(win) {
+  return [
     {
       label: '文件',
       submenu: [
+        {
+          label: '新建窗口',
+          accelerator: process.platform === 'darwin' ? 'Command+N' : 'Ctrl+N',
+          click: () => createWindow()
+        },
+        { type: 'separator' },
         {
           label: '退出',
           accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Alt+F4',
@@ -94,7 +102,7 @@ function createWindow() {
             const { dialog } = require('electron');
             dialog.showMessageBox(win, {
               title: '关于 LiveBooster',
-              message: 'LiveBooster v1.0.0\n一个直播数据助推工具\n\n© 2025 LiveBooster',
+              message: 'LiveBooster v1.1.0\n一个用于提升BTime直播场观数据指标的桌面工具\n\n© 2025 LiveBooster',
               buttons: ['确定']
             });
           }
@@ -109,19 +117,20 @@ function createWindow() {
       ]
     }
   ];
-
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
 }
 
 // 确保应用程序完全准备好后再创建窗口
 app.whenReady().then(() => {
-  createWindow();
+  const mainWindow = createWindow();
+  const menu = Menu.buildFromTemplate(createMenuTemplate(mainWindow));
+  Menu.setApplicationMenu(menu);
   
   // 如果是 macOS，点击 dock 图标时没有窗口则创建一个窗口
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      const newWindow = createWindow();
+      const menu = Menu.buildFromTemplate(createMenuTemplate(newWindow));
+      Menu.setApplicationMenu(menu);
     }
   });
 });
